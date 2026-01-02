@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>System Intelligence & Gap Resolution Report</title>
+<style>
+    body {
+        font-family: Segoe UI, Roboto, Arial, sans-serif;
+        background: #0f172a;
+        color: #e5e7eb;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background: #020617;
+        padding: 20px;
+        border-bottom: 1px solid #1e293b;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 22px;
+    }
+
+    .container {
+        padding: 24px;
+    }
+
+    .card {
+        background: #020617;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
+
+    .summary-item {
+        background: #020617;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .critical { color: #ef4444; }
+    .high { color: #f59e0b; }
+    .ok { color: #22c55e; }
+
+    h2 {
+        border-bottom: 1px solid #334155;
+        padding-bottom: 6px;
+    }
+
+    pre {
+        background: #020617;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 12px;
+        overflow-x: auto;
+        color: #e5e7eb;
+    }
+
+    .diff-add {
+        color: #22c55e;
+    }
+
+    .location {
+        font-size: 13px;
+        color: #94a3b8;
+    }
+
+    .action {
+        margin-top: 12px;
+        padding: 10px;
+        background: #020617;
+        border-left: 4px solid #f59e0b;
+    }
+
+    .secret {
+        border-left-color: #ef4444;
+    }
+
+    .button-bar button {
+        background: #1e293b;
+        color: #e5e7eb;
+        border: 1px solid #334155;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 8px;
+    }
+
+    .button-bar button:hover {
+        background: #334155;
+    }
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>System Intelligence & Gap Resolution Report</h1>
+    <div class="location">Scan completed • 3,142 files • ~1M LOC • Read-only analysis</div>
+</header>
+
+<div class="container">
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="card">
+    <h2>Executive Summary</h2>
+    <div class="summary-grid">
+        <div class="summary-item critical">Critical Failures<br><strong>7</strong></div>
+        <div class="summary-item high">Integration Gaps<br><strong>11</strong></div>
+        <div class="summary-item">Syntax Fixes<br><strong>38</strong></div>
+        <div class="summary-item">Missing Variables<br><strong>14</strong></div>
+        <div class="summary-item">Missing Secrets<br><strong>6</strong></div>
+        <div class="summary-item ok">Auto-Fix Applied<br><strong>26</strong></div>
+    </div>
+</div>
+
+<!-- CHARACTER FIX -->
+<div class="card">
+    <h2>Deterministic Character Fix (Auto-Applied)</h2>
+    <div class="location">Models/User.cs • Line 24</div>
+    <pre>
+Name = "Ali"
+<span class="diff-add">+ ,</span>
+Age = 25
+    </pre>
+    <div class="location">Reason: Object initializer requires comma separator.</div>
+</div>
+
+<!-- VARIABLE FIX -->
+<div class="card">
+    <h2 class="critical">Missing Variable: apiToken</h2>
+    <div class="location">
+        File: Services/AuthService.cs<br>
+        Class: AuthService<br>
+        Method: AuthenticateAsync<br>
+        Line: 91
+    </div>
+
+    <pre>
+new AuthenticationHeaderValue("Bearer", apiToken);
+    </pre>
+
+    <h3>Proposed Fix (Recommended)</h3>
+    <pre>
+private readonly string apiToken;
+
+public AuthService(IConfiguration configuration)
+{
+    apiToken = configuration["API_TOKEN"];
+}
+    </pre>
+
+    <div class="action">
+        Runtime Impact: API authentication fails → data fetch/post blocked.
+        <div class="button-bar">
+            <button>Apply Automatically</button>
+            <button>Apply Manually</button>
+            <button>Reject</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONFIG KEY -->
+<div class="card">
+    <h2 class="high">Missing Config Key: API_BASE_URL</h2>
+    <div class="location">
+        File: Services/ApiClient.cs • Method: GetOrdersAsync • Line: 37
+    </div>
+
+    <pre>
+var url = _configuration["API_BASE_URL"];
+    </pre>
+
+    <h3>Add to:</h3>
+    <pre>
+/Tenants/tenant_001/config/appsettings.json
+    </pre>
+
+    <pre>
+"API_BASE_URL": "https://api.example.com"
+    </pre>
+
+    <div class="action">
+        <div class="button-bar">
+            <button>Confirm & Add</button>
+            <button>Skip</button>
+        </div>
+    </div>
+</div>
+
+<!-- SECRET -->
+<div class="card">
+    <h2 class="critical">🔐 Secret Required: SALES_API_KEY</h2>
+    <div class="location">
+        File: Services/SalesApiClient.cs • Method: PostSaleAsync • Line: 88
+    </div>
+
+    <pre>
+AuthenticationHeaderValue("Bearer", salesApiKey);
+    </pre>
+
+    <h3>Secret Store</h3>
+    <pre>
+/Tenants/tenant_001/config/secrets.json
+    </pre>
+
+    <pre>
+"SALES_API_KEY": "&lt;VALUE REQUIRED&gt;"
+    </pre>
+
+    <div class="action secret">
+        This value cannot be guessed. Please enter it manually.
+        <div class="button-bar">
+            <button>Enter Secret</button>
+            <button>Skip</button>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>
