@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+
+sqlalchemy
+pydantic
+
+requests
+beautifulsoup4
+lxml
+
+python-dotenv
+
+apscheduler
+
+httpx
