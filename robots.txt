@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://www.aiclinix.online/sitemap.xml
+
+# Disallow admin or backend paths if any
+Disallow: /api/
+Disallow: /admin/
+
+# Allow all medicine pages
+Allow: /medicine/
+Allow: /company/
+Allow: /disease/
+
+# Crawl delay (be respectful)
+Crawl-delay: 1
